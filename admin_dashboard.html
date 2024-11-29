@@ -1,0 +1,64 @@
+<!-- templates/admin_dashboard.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Admin Dashboard</h2>
+
+    <!-- Users Section -->
+    <div class="users-section mt-4">
+        <h3>Users</h3>
+        {% if users|length > 0 %}
+            <ul class="list-group">
+                {% for user in users %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ user.username }} ({{ user.email }})
+                        <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                            {{ delete_form.hidden_tag() }}
+                            {{ delete_form.submit(class="btn btn-danger btn-sm", onclick="return confirm('Are you sure you want to delete this user?');") }}
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No users found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Files Section -->
+    <div class="files-section mt-4">
+        <h3>Files</h3>
+        {% if files|length > 0 %}
+            <ul class="list-group">
+                {% for file in files %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ file.filename }} (Uploaded by {{ file.owner.username }})
+                        <a href="{{ url_for('file.download_file', file_id=file.id) }}" class="btn btn-primary btn-sm">Download</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No files found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Activity Logs Section -->
+    <div class="activity-logs-section mt-4">
+        <h3>Activity Logs</h3>
+        {% if activity_logs|length > 0 %}
+            <ul class="list-group">
+                {% for log in activity_logs %}
+                    <li class="list-group-item">
+                        {{ log.user.username }}: {{ log.activity }} on {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No activity logs found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
